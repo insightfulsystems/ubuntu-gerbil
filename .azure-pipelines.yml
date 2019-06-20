@@ -105,20 +105,12 @@ stages:
     - arm32v7
     - arm64v8
   jobs:
-  - job: 
+  - job: Manifest 
     pool:
       vmImage: 'ubuntu-latest'
     steps:
         - script: |
-            echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
-            mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
-            sudo service docker restart
-          displayName: setup
-        - task: Docker@2
-          displayName: login to Docker Hub
-          inputs:
-            command: login
-            containerRegistry: insightfulbuildbot
-        - script: |
-            make manifest
-          displayName: push manifest
+            make setup-manifest
+            docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
+            make build-manifest
+            make push-manifest
