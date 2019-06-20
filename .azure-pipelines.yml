@@ -25,7 +25,7 @@ stages:
             make build-$(ARCH)
           displayName: build $(ARCH)
         - script: |
-            docker --config=~/.docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
+            docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
             make push-$(ARCH)
           displayName: push image for $(ARCH)
 
@@ -51,7 +51,7 @@ stages:
             make build-$(ARCH)
           displayName: build $(ARCH)
         - script: |
-            docker --config=~/.docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
+            docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
             make push-$(ARCH)
           displayName: push image for $(ARCH)
 
@@ -76,7 +76,7 @@ stages:
             make build-$(ARCH)
           displayName: build $(ARCH)
         - script: |
-            docker --config=~/.docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
+            docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
             make push-$(ARCH)
           displayName: push image for $(ARCH)
 
