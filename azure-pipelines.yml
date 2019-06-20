@@ -27,7 +27,7 @@ stages:
           displayName: login to Docker Hub
           inputs:
             command: login
-            containerRegistry: insightfulbuildbo
+            containerRegistry: insightfulbuildbot
         - script: |
             make build-$(ARCH)
           displayName: build $(ARCH)
@@ -59,7 +59,7 @@ stages:
           displayName: login to Docker Hub
           inputs:
             command: login
-            containerRegistry: insightfulbuildbo
+            containerRegistry: insightfulbuildbot
         - script: |
             make build-$(ARCH)
           displayName: build $(ARCH)
@@ -90,7 +90,7 @@ stages:
           displayName: login to Docker Hub
           inputs:
             command: login
-            containerRegistry: insightfulbuildbo
+            containerRegistry: insightfulbuildbot
         - script: |
             make build-$(ARCH)
           displayName: build $(ARCH)
@@ -118,7 +118,7 @@ stages:
           displayName: login to Docker Hub
           inputs:
             command: login
-            containerRegistry: insightfulbuildbo
+            containerRegistry: insightfulbuildbot
         - script: |
             make manifest
           displayName: push manifest
