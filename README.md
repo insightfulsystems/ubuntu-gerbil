@@ -4,7 +4,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/insightful/ubuntu-gerbil.svg)](https://hub.docker.com/r/insightful/ubuntu-gerbil)
 [![](https://images.microbadger.com/badges/image/insightful/ubuntu-gerbil.svg)](https://microbadger.com/images/insightful/ubuntu-gerbil "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/insightful/ubuntu-gerbil.svg)](https://microbadger.com/images/insightful/ubuntu-gerbil "Get your own version badge on microbadger.com")
-[![Build Status](https://travis-ci.org/insightfulsystems/ubuntu-gerbil.svg?branch=master)](https://travis-ci.org/insightfulsystems/ubuntu-gerbil)
+[![Build Status](https://dev.azure.com/ruicarmo/insightfulsystems/_apis/build/status/insightfulsystems.alpine-node?branchName=master)](https://dev.azure.com/ruicarmo/insightfulsystems/_build/latest?definitionId=1&branchName=master)
 
 An `ubuntu` image for [Gerbil Scheme][gerbil], with:
 

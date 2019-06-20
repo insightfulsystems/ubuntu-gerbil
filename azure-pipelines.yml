@@ -1,0 +1,104 @@
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+stages:
+- stage: amd64
+  displayName: amd64 (Intel/AMD64)
+  dependsOn: [] 
+  variables:
+    - name: ARCH
+      value: amd64 
+  jobs:
+  - job: 
+    displayName: build and push image
+    pool:
+        vmImage: 'ubuntu-latest'
+    steps:
+        - script: |
+            echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+            mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
+            sudo service docker restart
+            make qemu
+            make wrap-$(ARCH)
+          displayName: setup
+        - script: |
+            make build-$(ARCH)
+          displayName: build $(ARCH)
+        - script: |
+            make push-$(ARCH)
+          displayName: push image for $(ARCH)
+
+
+- stage: arm32v7
+  displayName: arm32v7 (Raspberry Pi 2+ and other armhf)
+  dependsOn: []
+  variables:
+    - name: ARCH
+      value: arm32v7 
+  jobs:
+  - job: 
+    displayName: build and push image
+    pool:
+        vmImage: 'ubuntu-latest'
+    steps:
+        - script: |
+            echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+            mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
+            sudo service docker restart
+            make qemu
+            make wrap-$(ARCH)
+          displayName: setup
+        - script: |
+            make build-$(ARCH)
+          displayName: build $(ARCH)
+        - script: |
+            make push-$(ARCH)
+          displayName: push image for $(ARCH)
+
+- stage: arm64v8
+  displayName: arm64v8 (Raspberry Pi 3+ and other ARM64)
+  dependsOn: []
+  variables:
+    - name: ARCH
+      value: arm64v8
+  jobs:
+  - job: 
+    displayName: build and push image
+    pool:
+        vmImage: 'ubuntu-latest'
+    steps:
+        - script: |
+            echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+            mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
+            sudo service docker restart
+            make qemu
+            make wrap-$(ARCH)
+          displayName: setup
+        - script: |
+            make build-$(ARCH)
+          displayName: build $(ARCH)
+        - script: |
+            make push-$(ARCH)
+          displayName: push image for $(ARCH)
+
+- stage: manifest
+  displayName: multi-arch manifest
+  dependsOn: 
+    - amd64
+    - arm32v7
+    - arm32v6
+  jobs:
+  - job: 
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+        - script: |
+            echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+            mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
+            sudo service docker restart
+          displayName: setup
+        - script: |
+            make manifest
+          displayName: push manifest
