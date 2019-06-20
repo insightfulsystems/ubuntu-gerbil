@@ -37,7 +37,7 @@ stages:
 
 
 - stage: arm32v7
-  displayName: arm32v7 (Raspberry Pi 2+ and other armhf)
+  displayName: arm32v7 (Pi 2+ and other armhf)
   dependsOn: []
   variables:
     - name: ARCH
@@ -68,7 +68,7 @@ stages:
           displayName: push image for $(ARCH)
 
 - stage: arm64v8
-  displayName: arm64v8 (Raspberry Pi 3+ and other ARM64)
+  displayName: arm64v8 (Pi 3+ and other ARM64)
   dependsOn: []
   variables:
     - name: ARCH
