@@ -23,6 +23,11 @@ stages:
             sudo service docker restart
             make qemu
           displayName: setup
+        - task: Docker@2
+          displayName: login to Docker Hub
+          inputs:
+            command: login
+            containerRegistry: insightfulbuildbo
         - script: |
             make build-$(ARCH)
           displayName: build $(ARCH)
@@ -50,6 +55,11 @@ stages:
             sudo service docker restart
             make qemu
           displayName: setup
+        - task: Docker@2
+          displayName: login to Docker Hub
+          inputs:
+            command: login
+            containerRegistry: insightfulbuildbo
         - script: |
             make build-$(ARCH)
           displayName: build $(ARCH)
@@ -76,6 +86,11 @@ stages:
             sudo service docker restart
             make qemu
           displayName: setup
+        - task: Docker@2
+          displayName: login to Docker Hub
+          inputs:
+            command: login
+            containerRegistry: insightfulbuildbo
         - script: |
             make build-$(ARCH)
           displayName: build $(ARCH)
@@ -99,6 +114,11 @@ stages:
             mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
             sudo service docker restart
           displayName: setup
+        - task: Docker@2
+          displayName: login to Docker Hub
+          inputs:
+            command: login
+            containerRegistry: insightfulbuildbo
         - script: |
             make manifest
           displayName: push manifest
