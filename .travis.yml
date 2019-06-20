@@ -19,21 +19,21 @@ jobs:
     - stage: amd64
       name: Intel/AMD 64-bit (x86_64)
       script:
-        - travis_wait 30 make build-amd64
+        - travis_wait 50 make build-amd64
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         - make push-amd64
     - stage: arm64v8
       name: ARMv8 64-bit (modern Raspberry 3+, other 64-bit ARM)
       script:
         - make qemu
-        - travis_wait 30 make build-arm64v8
+        - travis_wait 50 make build-arm64v8
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         - make push-arm64v8
     - stage: arm32v7
       name: ARMv7 32-bit (modern Raspberry Pi 2/3+, ODROID, other 32-bit ARM, usually hard float)
       script:
         - make qemu
-        - travis_wait 30 make build-arm32v7
+        - travis_wait 50 make build-arm32v7
         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         - make push-arm32v7
     - stage: manifest
