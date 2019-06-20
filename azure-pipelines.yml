@@ -21,7 +21,6 @@ stages:
             mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
             sudo service docker restart
             make qemu
-            make wrap-$(ARCH)
           displayName: setup
         - script: |
             make build-$(ARCH)
@@ -48,7 +47,6 @@ stages:
             mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
             sudo service docker restart
             make qemu
-            make wrap-$(ARCH)
           displayName: setup
         - script: |
             make build-$(ARCH)
@@ -74,7 +72,6 @@ stages:
             mkdir -p $HOME/.docker && echo '{"experimental":"enabled"}' | tee $HOME/.docker/config.json
             sudo service docker restart
             make qemu
-            make wrap-$(ARCH)
           displayName: setup
         - script: |
             make build-$(ARCH)
