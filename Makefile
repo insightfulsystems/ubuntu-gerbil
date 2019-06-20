@@ -18,6 +18,8 @@ qemu:
 build:
 	$(foreach ARCH, $(TARGET_ARCHITECTURES), make build-$(ARCH);)
 
+wrap-%: # bogus task for pipeline uniformity
+	$(eval ARCH := $*)
 
 build-%:
 	$(eval ARCH := $*)
