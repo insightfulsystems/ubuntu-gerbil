@@ -5,6 +5,8 @@ export BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 export TAG_DATE=`date -u +"%Y%m%d"`
 export BASE_IMAGE=insightful/ubuntu-gambit
 export TARGET_ARCHITECTURES=amd64 arm64v8 arm32v7
+export DOCKER?=docker --config=~/.docker
+export DOCKER_CLI_EXPERIMENTAL=enabled
 export SHELL=/bin/bash
 
 # Permanent local overrides
@@ -13,30 +15,37 @@ export SHELL=/bin/bash
 .PHONY: build qemu wrap push manifest clean
 
 qemu:
-	-docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
-build:
-	$(foreach ARCH, $(TARGET_ARCHITECTURES), make build-$(ARCH);)
+	@echo "==> Setting up QEMU"
+	-$(DOCKER) run --rm --privileged multiarch/qemu-user-static:register --reset
+	@echo "==> Done setting up QEMU"
 
 wrap-%: # bogus task for pipeline uniformity
 	$(eval ARCH := $*)
 
+build:
+	@echo "==> Building all containers"
+	$(foreach ARCH, $(TARGET_ARCHITECTURES), make build-$(ARCH);)
+	@echo "==> Done."
+
 build-%:
 	$(eval ARCH := $*)
-	docker build --build-arg BUILD_DATE=$(BUILD_DATE) \
+	@echo "--> Building $(ARCH)"
+	$(DOCKER) build --build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg ARCH=$(ARCH) \
-		--build-arg BASE=$(BASE_IMAGE):$(ARCH) \
+		--build-arg BASE=$(BUILD_IMAGE_NAME):$(ARCH) \
 		--build-arg VCS_REF=$(VCS_REF) \
 		--build-arg VCS_URL=$(VCS_URL) \
 		-t $(IMAGE_NAME):$(ARCH) src
-	@echo "--- Done building $(ARCH) ---"
+	@echo "--> Done building $(ARCH)"
 
 push:
-	docker push $(IMAGE_NAME)
+	@echo "==> Pushing $(IMAGE_NAME)"
+	$(DOCKER) push $(IMAGE_NAME)
+	@echo "==> Done."
 
 push-%:
 	$(eval ARCH := $*)
-	docker push $(IMAGE_NAME):$(ARCH)
+	$(DOCKER) push $(IMAGE_NAME):$(ARCH)
 
 expand-%: # expand architecture variants for manifest
 	@if [ "$*" == "amd64" ] ; then \
@@ -45,26 +54,31 @@ expand-%: # expand architecture variants for manifest
 	   echo '--arch arm --variant $*' | cut -c 1-21,27-; \
 	fi
 
-setup-manifest:
-	@if [ ! -f "~/.docker/config.json" ] ; then \
-		mkdir ~/.docker && \
-		echo '{ "experimental": "enabled" }' > ~/.docker/config.json ; \
-	fi
+manifest:
+	@echo "==> Building multi-architecture manifest"
+	$(foreach STEP, build push, make $(STEP)-manifest;)
+	@echo "==> Done."	
 
 build-manifest:
-	docker --config ~/.docker manifest create --amend \
+	@echo "--> Creating manifest"
+	$(eval DOCKER_CONFIG := $(shell echo "$(DOCKER)" | cut -f 2 -d=)/config.json)
+	cat $(DOCKER_CONFIG) | grep -v auth
+	$(DOCKER) manifest create --amend \
 		$(IMAGE_NAME):latest \
-		$(foreach arch, $(TARGET_ARCHITECTURES), $(IMAGE_NAME):$(NODE_MAJOR_VERSION)-$(arch) )
+		$(foreach arch, $(TARGET_ARCHITECTURES), $(IMAGE_NAME):$(arch) )
 	$(foreach arch, $(TARGET_ARCHITECTURES), \
-		docker manifest annotate \
+		$(DOCKER) manifest annotate \
 			$(IMAGE_NAME):latest \
-			$(IMAGE_NAME):$(NODE_MAJOR_VERSION)-$(arch) $(shell make expand-$(arch));)
+			$(IMAGE_NAME):$(arch) $(shell make expand-$(arch));)
 
 push-manifest:
-	docker --config ~/.docker manifest push $(IMAGE_NAME):latest
+	@echo "--> Pushing manifest"
+	$(DOCKER) manifest push $(IMAGE_NAME):latest
 
 clean:
-	-docker rm -fv $$(docker ps -a -q -f status=exited)
-	-docker rmi -f $$(docker images -q -f dangling=true)
-	-docker rmi -f $(BUILD_IMAGE_NAME)
-	-docker rmi -f $$(docker images --format '{{.Repository}}:{{.Tag}}' | grep $(IMAGE_NAME))
+	@echo "==> Cleaning up old images..."
+	-$(DOCKER) rm -fv $$($(DOCKER) ps -a -q -f status=exited)
+	-$(DOCKER) rmi -f $$($(DOCKER) images -q -f dangling=true)
+	-$(DOCKER) rmi -f $(BUILD_IMAGE_NAME)
+	-$(DOCKER) rmi -f $$($(DOCKER) images --format '{{.Repository}}:{{.Tag}}' | grep $(IMAGE_NAME))
+	@echo "==> Done."
