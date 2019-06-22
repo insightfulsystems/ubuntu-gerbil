@@ -10,4 +10,6 @@ An `ubuntu` image for [Gerbil Scheme][gerbil], with:
 
 * Support for `amd64`, `arm32v7` and `arm64v8` architectures
 
+Images are automatically rebuilt whenever [`insightful/ubuntu-gambit`](https://github.com/insightfulsystems/ubuntu-gambit) is updated.
+
 [gerbil]: https://cons.io/
