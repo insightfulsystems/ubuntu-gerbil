@@ -12,9 +12,6 @@ stages:
     parameters:
       arch: amd64
       timeout: 120
-      username: $(DOCKER_USERNAME)
-      password: $(DOCKER_PASSWORD)
-
 
 - stage: arm32v7
   displayName: arm32v7 (Pi 2+ and other armhf)
@@ -24,8 +21,6 @@ stages:
     parameters:
       arch: arm32v7
       timeout: 240
-      username: $(DOCKER_USERNAME)
-      password: $(DOCKER_PASSWORD)
 
 
 - stage: arm64v8
@@ -36,8 +31,6 @@ stages:
     parameters:
       arch: arm64v8
       timeout: 240
-      username: $(DOCKER_USERNAME)
-      password: $(DOCKER_PASSWORD)
 
 
 - stage: Manifest
